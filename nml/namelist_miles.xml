@@ -6,13 +6,13 @@ namelist_miles.xml
 
 Description
 Namelist for the MiLES (Blocking and EOFs) package by P. Davini (ISAC-CNR)
+MiLES (Mid-Latitude Evaluation System) v0.31
 
 Author
 J. von Hardenberg (ISAC-CNR, Italy - j.vonhardenberg@isac.cnr.it)
 
-Project
-
 Reference
+https://github.com/oloapinivad/MiLES
 
 This namelist is part of the ESMValTool
 ###############################################################################
