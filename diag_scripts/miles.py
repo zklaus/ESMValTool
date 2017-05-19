@@ -21,12 +21,12 @@ def main(project_info):
     verbosity = E.get_verbosity()
     diag_script = E.get_diag_script_name()
 
-    res = E.write_references(diag_script,              # diag script name
-                             ["A_will_ke"],            # authors
-                             [""],                     # contributors
-                             ["D_Williams09climdyn"],  # diag_references
-                             ["E_isccp_d1"],           # obs_references
-                             ["P_cmug"],               # proj_references
+    res = E.write_references(diag_script,                # diag script name
+                             ["A_hard_jo", "A_davi_pa"], # authors
+                             [""],                       # contributors
+                             ["D_davini12cd"],           # diag_references
+                             ["E_erainterim"],           # obs_references
+                             ["P_c3s34a"],               # proj_references
                              project_info,
                              verbosity,
                              False)
