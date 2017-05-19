@@ -62,6 +62,7 @@ This namelist is part of the ESMValTool
         <variable ref_model="ref">            z500                </variable>
         <field_type>          T2Ds                  </field_type>
         <diag_script_cfg_dir> ./nml/cfg_miles/    </diag_script_cfg_dir>
+        <diag_script cfg="cfg_miles.r"> miles.py  </diag_script>
         <diag_script cfg="cfg_miles.r"> miles_eof.r  </diag_script>
     </diag>
 </DIAGNOSTICS>
