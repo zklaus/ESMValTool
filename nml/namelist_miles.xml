@@ -13,6 +13,7 @@ J. von Hardenberg (ISAC-CNR, Italy - j.vonhardenberg@isac.cnr.it)
 
 Reference
 https://github.com/oloapinivad/MiLES
+Davini, P., C. Cagnazzo, S. Gualdi, and A. Navarra, 2012: Bidimensional Diagnostics, Variability, and Trends of Northern Hemisphere Blocking. J. Climate, 25, 6496–6509, doi: 10.1175/JCLI-D-12-00032.1
 
 This namelist is part of the ESMValTool
 ###############################################################################
@@ -44,6 +45,7 @@ This namelist is part of the ESMValTool
 
 <!-- Please do not change anything below this line, 
      unless you want to modify the standard diagnostic settings. -->
+
 <DIAGNOSTICS>
     <diag>
         <description>         MiLES Blocking Diagnostic  </description>
@@ -51,7 +53,8 @@ This namelist is part of the ESMValTool
         <variable ref_model="ref">            z500                </variable>
         <field_type>          T2Ds                  </field_type>
         <diag_script_cfg_dir> ./nml/cfg_miles/    </diag_script_cfg_dir>
-        <diag_script cfg="cfg_miles.r"> miles.r  </diag_script>
+        <diag_script cfg="cfg_miles.r"> miles.py  </diag_script>
+        <diag_script cfg="cfg_miles.r"> miles_block.r  </diag_script>
     </diag>
     <diag>
         <description>         MiLES EOF Diagnostic  </description>
