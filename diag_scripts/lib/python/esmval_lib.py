@@ -800,7 +800,7 @@ class ESMValProject(object):
         self.project_info['TEMPORARY']['ref_contr'] = ref_contr
         self.project_info['TEMPORARY']['ref_obs'] = ref_obs
         self.project_info['TEMPORARY']['ref_proj'] = ref_proj
-        self.project_info['TEMPORARY']['ref_diag'] = ref_proj
+        self.project_info['TEMPORARY']['ref_diag'] = ref_diag
         self.project_info['TEMPORARY']['ref_script'] = ref_script
 
         projects.run_executable("interface_scripts/write_references.ncl",
