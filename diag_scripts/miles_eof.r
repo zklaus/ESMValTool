@@ -60,9 +60,9 @@ for (model_idx in c(1:(length(models_name)))) {
     year1=models_start_year[model_idx]
     year2=models_end_year[model_idx]
     infile <- interface_get_fullpath(var0, field_type0, model_idx)
-
-    system2('diag_scripts/aux/miles/z500_prepare.sh',c(exp,toString(year1),toString(year2), infile,zdir))
-    system(paste("diag_scripts/aux/miles/eof_fast.sh",exp ,year1 ,year2,"\"",paste(seasons,collapse = " "),"\"","\"",paste(teles,collapse = " "),"\"",zdir,work_dir))
+    zdirfile=paste0(work_dir,"/",exp,"/",exp,"_",toString(year1),"-",toString(year2),"_Z500_regrid.nc")
+    system2('diag_scripts/aux/miles/z500_prepare.sh',c(exp,toString(year1),toString(year2), infile,zdirfile))
+    system(paste("diag_scripts/aux/miles/eof_fast.sh",exp ,year1 ,year2,"\"",paste(seasons,collapse = " "),"\"","\"",paste(teles,collapse = " "),"\"",zdirfile,work_dir))
 }
 
 

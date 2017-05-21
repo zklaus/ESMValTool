@@ -46,12 +46,10 @@ diag_base = "MiLES"
 ## Create working dirs if they do not exist
 work_dir=file.path(work_dir, diag_base)
 plot_dir=file.path(plot_dir, diag_base)
-zdir=paste0(work_dir,"/","Z500/")
 
 dir.create(plot_dir, showWarnings = FALSE)
 dir.create(work_dir, showWarnings = FALSE)
 dir.create(climo_dir, showWarnings = FALSE)
-dir.create(zdir, showWarnings = FALSE)
 
 ##
 ## Run it all
@@ -62,10 +60,11 @@ for (model_idx in c(1:(length(models_name)))) {
     year1=models_start_year[model_idx]
     year2=models_end_year[model_idx]
     infile <- interface_get_fullpath(var0, field_type0, model_idx)
+    zdirfile=paste0(work_dir,"/",exp,"/",exp,"_",toString(year1),"-",toString(year2),"_Z500_regrid.nc")
 
-    system2('diag_scripts/aux/miles/z500_prepare.sh',c(exp,toString(year1),toString(year2), infile, zdir))
+    system2('diag_scripts/aux/miles/z500_prepare.sh',c(exp,toString(year1),toString(year2), infile, zdirfile))
     for (seas in seasons) {
-       miles.block.fast( year1=year1, year2=year2, exp=exp, season=seas,DATADIR=zdir,FILESDIR=work_dir)
+       miles.block.fast( year1=year1, year2=year2, exp=exp, season=seas,z500filename=zdirfile,FILESDIR=work_dir)
     }
 }
 

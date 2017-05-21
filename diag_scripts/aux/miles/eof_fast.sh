@@ -1,44 +1,36 @@
 #!/bin/bash
 
-cdo=/usr/bin/cdo
-cdonc="$cdo -f nc"
-cdo4="$cdo -f nc4 -z zip"
-
 # -----------------------------------------------#
 # NB: due to change in CDO code after version 1.6.4
 # eigenvectors need to be normalized and area weighting must be specified for eofcoeffs
 # if you use a previous version please be aware that inconsistencies may arise
 # Beware: PCs are not standardized (this is done in the plotting tool)
 # -----------------------------------------------#
+cdo=/usr/bin/cdo
+cdonc="$cdo -f nc"
+cdo4="$cdo -f nc4 -z zip"
 
 exp=$1
 year1=$2
 year2=$3
 seasons=$4
 teles=$5
-DATADIR=$6
+z500filename=$6
 FILESDIR=$7
 
+DATADIR=$(dirname $z500filename)
 TEMPDIR=$DATADIR/tempdir_${exp}_$RANDOM
-ZDIR=$DATADIR/$exp
 mkdir -p $TEMPDIR
 
 #number of EOFs
 neofs=4
 
 #preparing unique netcdf file
-$cdonc cat $ZDIR/Z500*nc $TEMPDIR/daily_file.nc
-$cdonc monmean -selyear,$year1/$year2 $TEMPDIR/daily_file.nc $TEMPDIR/monthly_file.nc
-echo ---------------------------
-echo TELES: $teles
-echo ---------------------------
-echo ---------------------------
-echo SEASONS $seasons
-echo ---------------------------
+$cdonc monmean -selyear,$year1/$year2 $z500filename $TEMPDIR/monthly_file.nc
 
 for tele in $teles ; do
 for season in $seasons ; do
-	echo "Processing " $exp $season $tele
+	echo $season
 
 	#fix folders and file names
 	EOFDIR=$FILESDIR/$exp/EOFs/${tele}/${year1}_${year2}/${season}
