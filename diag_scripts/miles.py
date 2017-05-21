@@ -24,7 +24,7 @@ def main(project_info):
     res = E.write_references(diag_script,                # diag script name
                              ["A_hard_jo", "A_davi_pa"], # authors
                              [""],                       # contributors
-                             ["D_davini12cd"],           # diag_references
+                             ["D_davini12jc"],           # diag_references
                              ["E_erainterim"],           # obs_references
                              ["P_c3s34a"],               # proj_references
                              project_info,
