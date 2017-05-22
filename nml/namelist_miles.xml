@@ -35,7 +35,7 @@ This namelist is part of the ESMValTool
 </GLOBAL>
 
 <MODELS>
-    <model> CMIP5_ETHZ EC-Earth day  historical r8i1p1 2000 2001 /work/users/jost/cmip5-data </model> 
+    <model> CMIP5_ETHZ EC-Earth day  historical r8i1p1 1990 1999 /work/users/jost/cmip5-data </model> 
     <model id="ref"> CMIP5_ETHZ  ERAINT  day  reanalysis r1i1p1 2000 2001 /work/users/jost/esmtest_data  </model>
 <!--
     <model>  OBS    ERA-Interim    reanaly    1    2000  2001   /work/users/jost/esmtest_data </model>
@@ -64,6 +64,15 @@ This namelist is part of the ESMValTool
         <diag_script_cfg_dir> ./nml/cfg_miles/    </diag_script_cfg_dir>
         <diag_script cfg="cfg_miles.r"> miles.py  </diag_script>
         <diag_script cfg="cfg_miles.r"> miles_eof.r  </diag_script>
+    </diag>
+    <diag>
+        <description>         MiLES Regimes Diagnostic  </description>
+        <variable_def_dir>    ./variable_defs/     </variable_def_dir>
+        <variable ref_model="ref">            z500                </variable>
+        <field_type>          T2Ds                  </field_type>
+        <diag_script_cfg_dir> ./nml/cfg_miles/    </diag_script_cfg_dir>
+        <diag_script cfg="cfg_miles.r"> miles.py  </diag_script>
+        <diag_script cfg="cfg_miles.r"> miles_regimes.r  </diag_script>
     </diag>
 </DIAGNOSTICS>
 

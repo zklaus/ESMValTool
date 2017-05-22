@@ -1,6 +1,14 @@
 ## Analysis options
-seasons <- c("DJF", "JJA")
+seasons <- c("DJF")
+
+# select which EOFs you want to compute
+# "NAO": the 4 first  EOFs of North Atlantic, i.e. North Atlantic Oscillation as EOF1
+# "AO" : the 4 first EOFs of Northern Hemispiere, i.e. Arctic Oscillation as EOF1 
 teles <- c("NAO")
+
+# select how many clusters for k-means over the North Atlantic
+# NB: only 4 clusters supported so far.  
+nclusters=4
 
 output_file_type="png"
 print(paste("Writing output as",output_file_type))
