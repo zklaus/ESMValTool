@@ -21,10 +21,20 @@ def main(project_info):
     verbosity = E.get_verbosity()
     diag_script = E.get_diag_script_name()
 
+    if "miles_block" in config_file:
+       diag_refs=["D_davini12jc", "D_tibal90ta"]
+       diag_script="miles_block.r"
+    elif "miles_eof" in config_file:
+       diag_refs=[""]
+       diag_script="miles_eof.r"
+    else:
+       diag_refs=[""]
+       diag_script="miles_regimes.r"
+
     res = E.write_references(diag_script,                # diag script name
-                             ["A_hard_jo", "A_davi_pa"], # authors
+                             ["A_davi_pa", "A_hard_jo"], # authors
                              [""],                       # contributors
-                             ["D_davini12jc"],           # diag_references
+                             diag_refs,           # diag_references
                              ["E_erainterim"],           # obs_references
                              ["P_c3s34a"],               # proj_references
                              project_info,
