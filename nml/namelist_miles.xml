@@ -27,6 +27,7 @@ This namelist is part of the ESMValTool
     <wrk_dir type="path">                  @{WORKPATH}  </wrk_dir>
     <plot_dir type="path">                 @{PLOTPATH}/ </plot_dir>
     <climo_dir type="path">                @{CLIMOPATH} </climo_dir>
+    <regridding_dir type="path">           @{REGRPATH}  </regridding_dir>
     <write_plot_vars type="boolean">       True         </write_plot_vars>
     <max_data_filesize type="integer">     100          </max_data_filesize>
     <max_data_blocksize type="integer">    500          </max_data_blocksize>
@@ -36,8 +37,13 @@ This namelist is part of the ESMValTool
 </GLOBAL>
 
 <MODELS>
-    <model> CMIP5_ETHZ EC-Earth day  historical r8i1p1 1990 1999 /work/users/jost/cmip5-data </model> 
+ 
+   <model> CMIP5_ETHZ EC-Earth day  historical r8i1p1 1990 1999 /work/users/jost/cmip5-data </model> 
+<!--
+   <model> CMIP5_ETHZ MRI-ESM1 day  historical r8i1p1 1990 1999 /home/paolo/work/DATA/CMIP5/MRI-ESM1/HIST/r1/day/Z500 </model> 
+-->
     <model id="ref"> CMIP5_ETHZ  ERAINT  day  reanalysis r1i1p1 2000 2001 /work/users/jost/esmtest_data  </model>
+
 <!--
     <model>  OBS    ERA-Interim    reanaly    1    2000  2001   /work/users/jost/esmtest_data </model>
      <model> CMIP5      ERAINT   day  reanalysis  r1i1p1  1989 2010  /work/users/paolo/DATA/ERAINTERIM/day/Z500/</model> 
@@ -55,9 +61,7 @@ This namelist is part of the ESMValTool
         <field_type>          T2Ds                  </field_type>
         <diag_script_cfg_dir> ./nml/cfg_miles/    </diag_script_cfg_dir>
         <diag_script cfg="miles_block"> miles.py  </diag_script>
-<!--
         <diag_script cfg="cfg_miles.r"> miles_block.r  </diag_script>
--->
     </diag>
     <diag>
         <description>         MiLES EOF Diagnostic  </description>
@@ -66,9 +70,7 @@ This namelist is part of the ESMValTool
         <field_type>          T2Ds                  </field_type>
         <diag_script_cfg_dir> ./nml/cfg_miles/    </diag_script_cfg_dir>
         <diag_script cfg="miles_eof"> miles.py  </diag_script>
-<!--
         <diag_script cfg="cfg_miles.r"> miles_eof.r  </diag_script>
--->
     </diag>
     <diag>
         <description>         MiLES Regimes Diagnostic  </description>
@@ -77,9 +79,7 @@ This namelist is part of the ESMValTool
         <field_type>          T2Ds                  </field_type>
         <diag_script_cfg_dir> ./nml/cfg_miles/    </diag_script_cfg_dir>
         <diag_script cfg="miles_regimes"> miles.py  </diag_script>
-<!--
         <diag_script cfg="cfg_miles.r"> miles_regimes.r  </diag_script>
--->
     </diag>
 </DIAGNOSTICS>
 
