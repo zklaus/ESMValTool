@@ -32,7 +32,7 @@ This namelist is part of the ESMValTool
     <max_data_filesize type="integer">     100          </max_data_filesize>
     <max_data_blocksize type="integer">    500          </max_data_blocksize>
     <verbosity  type="integer">              1          </verbosity>
-    <exit_on_warning  type="boolean">      True         </exit_on_warning>
+    <exit_on_warning  type="boolean">      False         </exit_on_warning>
     <output_file_type>                     png          </output_file_type>
 </GLOBAL>
 
@@ -41,11 +41,11 @@ This namelist is part of the ESMValTool
    <model> CMIP5_ETHZ EC-Earth day  historical r8i1p1 1990 1999 /work/users/jost/cmip5-data </model> 
 <!--
    <model> CMIP5_ETHZ MRI-ESM1 day  historical r8i1p1 1990 1999 /home/paolo/work/DATA/CMIP5/MRI-ESM1/HIST/r1/day/Z500 </model> 
+    <model id="ref"> OBS  ERAINT  day  reanalysis r1i1p1 1979 2014 /work/users/jost/esmtest_data  </model>
 -->
-    <model id="ref"> CMIP5_ETHZ  ERAINT  day  reanalysis r1i1p1 2000 2001 /work/users/jost/esmtest_data  </model>
 
+    <model>  OBS    ERA-Interim    reanaly    1    1979 2014   /work/users/jost/esmtest_data </model>
 <!--
-    <model>  OBS    ERA-Interim    reanaly    1    2000  2001   /work/users/jost/esmtest_data </model>
      <model> CMIP5      ERAINT   day  reanalysis  r1i1p1  1989 2010  /work/users/paolo/DATA/ERAINTERIM/day/Z500/</model> 
 -->
 </MODELS>
