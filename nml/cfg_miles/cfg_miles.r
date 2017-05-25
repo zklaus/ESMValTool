@@ -10,9 +10,6 @@ teles <- c("NAO")
 # NB: only 4 clusters supported so far.  
 nclusters=4
 
-output_file_type="png"
-print(paste("Writing output as",output_file_type))
-
 # Specific settings for PNG output
 png_width=960
 png_height=960
