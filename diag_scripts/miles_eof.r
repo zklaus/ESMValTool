@@ -60,30 +60,37 @@ for (model_idx in c(1:(length(models_name)))) {
     year1=models_start_year[model_idx]
     year2=models_end_year[model_idx]
     infile <- interface_get_fullpath(var0, field_type0, model_idx)
-    zdirfile=paste0(regridding_dir,"/",exp,"/",exp,"_",toString(year1),"-",toString(year2),"_Z500_regrid.nc")
-    system2('diag_scripts/aux/miles/z500_prepare.sh',c(exp,toString(year1),toString(year2), infile,zdirfile))
-    system(paste("diag_scripts/aux/miles/eof_fast.sh",exp ,year1 ,year2,"\"",paste(seasons,collapse = " "),"\"","\"",paste(teles,collapse = " "),"\"",zdirfile,work_dir))
+    zdirfile=paste0(regridding_dir,"/",exp,"/",exp,"_",toString(year1),
+                    "-",toString(year2),"_Z500_regrid.nc")
+    system2('diag_scripts/aux/miles/z500_prepare.sh',c(exp,
+                    toString(year1),toString(year2), infile,zdirfile))
+    system(paste("diag_scripts/aux/miles/eof_fast.sh",exp ,year1 ,year2,
+             "\"",paste(seasons,collapse = " "),"\"","\"",
+             paste(teles,collapse = " "),"\"",zdirfile,work_dir))
 }
-
 
 ##
 ## Make the plots
 ##
-ref_idx=length(models_name);
-dataset_ref= models_name[ref_idx]
-year1_ref=models_start_year[ref_idx]
-year2_ref=models_end_year[ref_idx]
+if (write_plots) {
+   ref_idx=length(models_name);
+   dataset_ref= models_name[ref_idx]
+   year1_ref=models_start_year[ref_idx]
+   year2_ref=models_end_year[ref_idx]
 
-for (model_idx in c(1:(length(models_name)-1))) {
-    exp <- models_name[model_idx]
-    year1=models_start_year[model_idx]
-    year2=models_end_year[model_idx]
-    for (tele in teles) {
-     for (seas in seasons) {
-       miles.eof.figures(exp,year1,year2,dataset_ref,year1_ref,year2_ref,season=seas,tele=tele,FIGDIR=plot_dir,FILESDIR=work_dir,REFDIR=work_dir,CFGSCRIPT=diag_script_cfg)
-     }
-    }
+   for (model_idx in c(1:(length(models_name)-1))) {
+      exp <- models_name[model_idx]
+      year1=models_start_year[model_idx]
+      year2=models_end_year[model_idx]
+      for (tele in teles) {
+         for (seas in seasons) {
+            miles.eof.figures(exp,year1,year2,dataset_ref,year1_ref,
+                 year2_ref,season=seas,tele=tele,FIGDIR=plot_dir,
+                 FILESDIR=work_dir,REFDIR=work_dir,
+                 CFGSCRIPT=diag_script_cfg)
+         }
+      }
+   }
 }
-
 
 info_output(paste0(">>>>>>>> Leaving ", diag_script), verbosity, 4)

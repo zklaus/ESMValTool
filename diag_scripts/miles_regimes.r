@@ -71,8 +71,7 @@ for (model_idx in c(1:(length(models_name)))) {
 ##
 ## Make the plots
 ##
-#dataset_ref="ERAINTERIM"; year1_ref=1989; year2_ref=2010
-#dataset_ref="EC-Earth"; year1_ref=2000; year2_ref=2001
+if (write_plots) {
 ref_idx=length(models_name);
 dataset_ref= models_name[ref_idx]
 year1_ref=models_start_year[ref_idx]
@@ -85,6 +84,7 @@ for (model_idx in c(1:(length(models_name)-1))) {
     for (seas in seasons) {
        miles.regimes.figures( year1=year1, year2=year2, exp=exp, dataset_ref=dataset_ref, year1_ref=year1_ref, year2_ref=year2_ref, season=seas,FIGDIR=plot_dir,FILESDIR=work_dir,REFDIR=work_dir,CFGSCRIPT=diag_script_cfg,nclusters=nclusters)
     }
+}
 }
 info_output(paste0(">>>>>>>> Leaving ", diag_script), verbosity, 4)
 
