@@ -45,7 +45,7 @@ This namelist is part of the ESMValTool
     <model id="ref"> OBS  ERAINT  day  reanalysis r1i1p1 1979 2014 /work/users/jost/esmtest_data  </model>
 -->
 
-    <model id="ref">  OBS    ERA-Interim    reanaly    1    1979 2014   /work/users/jost/esmtest_data </model>
+    <model>  OBS    ERA-Interim    reanaly    1    1979 2014   /work/users/jost/esmtest_data </model>
 <!--
      <model> CMIP5      ERAINT   day  reanalysis  r1i1p1  1989 2010  /work/users/paolo/DATA/ERAINTERIM/day/Z500/</model> 
 -->
@@ -58,7 +58,7 @@ This namelist is part of the ESMValTool
     <diag>
         <description>         MiLES Blocking Diagnostic  </description>
         <variable_def_dir>    ./variable_defs/     </variable_def_dir>
-        <variable ref_model="ref">            z500                </variable>
+        <variable ref_model="ERA-Interim">            z500                </variable>
         <field_type>          T2Ds                  </field_type>
         <diag_script_cfg_dir> ./nml/cfg_miles/    </diag_script_cfg_dir>
         <diag_script cfg="miles_block"> miles.py  </diag_script>
@@ -67,7 +67,7 @@ This namelist is part of the ESMValTool
     <diag>
         <description>         MiLES EOF Diagnostic  </description>
         <variable_def_dir>    ./variable_defs/     </variable_def_dir>
-        <variable ref_model="ref">            z500                </variable>
+        <variable ref_model="ERA-Interim">            z500                </variable>
         <field_type>          T2Ds                  </field_type>
         <diag_script_cfg_dir> ./nml/cfg_miles/    </diag_script_cfg_dir>
         <diag_script cfg="miles_eof"> miles.py  </diag_script>
@@ -76,7 +76,7 @@ This namelist is part of the ESMValTool
     <diag>
         <description>         MiLES Regimes Diagnostic  </description>
         <variable_def_dir>    ./variable_defs/     </variable_def_dir>
-        <variable ref_model="ref">            z500                </variable>
+        <variable ref_model="ERA-Interim">            z500                </variable>
         <field_type>          T2Ds                  </field_type>
         <diag_script_cfg_dir> ./nml/cfg_miles/    </diag_script_cfg_dir>
         <diag_script cfg="miles_regimes"> miles.py  </diag_script>

@@ -72,19 +72,24 @@ for (model_idx in c(1:(length(models_name)))) {
 ## Make the plots
 ##
 if (write_plots) {
-ref_idx=length(models_name);
-dataset_ref= models_name[ref_idx]
-year1_ref=models_start_year[ref_idx]
-year2_ref=models_end_year[ref_idx]
+   ref_idx=which(models_name == var_attr_ref)
+   if(length(ref_idx)==0) {
+      ref_idx=length(models_name);
+   }
+   dataset_ref= models_name[ref_idx]
+   year1_ref=models_start_year[ref_idx]
+   year2_ref=models_end_year[ref_idx]
 
-for (model_idx in c(1:(length(models_name)-1))) {
-    exp <- models_name[model_idx]
-    year1=models_start_year[model_idx]
-    year2=models_end_year[model_idx]
-    for (seas in seasons) {
-       miles.regimes.figures( year1=year1, year2=year2, exp=exp, dataset_ref=dataset_ref, year1_ref=year1_ref, year2_ref=year2_ref, season=seas,FIGDIR=plot_dir,FILESDIR=work_dir,REFDIR=work_dir,CFGSCRIPT=diag_script_cfg,nclusters=nclusters)
-    }
+   for (model_idx in c(1:(length(models_name)))) {
+      if(model_idx != ref_idx) {
+         exp <- models_name[model_idx]
+         year1=models_start_year[model_idx]
+         year2=models_end_year[model_idx]
+         for (seas in seasons) {
+            miles.regimes.figures( year1=year1, year2=year2, exp=exp, dataset_ref=dataset_ref, year1_ref=year1_ref, year2_ref=year2_ref, season=seas,FIGDIR=plot_dir,FILESDIR=work_dir,REFDIR=work_dir,CFGSCRIPT=diag_script_cfg,nclusters=nclusters)
+         }
+      }
+   }
 }
-}
+
 info_output(paste0(">>>>>>>> Leaving ", diag_script), verbosity, 4)
-
