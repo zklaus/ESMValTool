@@ -8,8 +8,9 @@ Description
 Namelist for the MiLES (Blocking and EOFs) package by P. Davini (ISAC-CNR)
 MiLES (Mid-Latitude Evaluation System) v0.31
 
-Author
+Authors
 J. von Hardenberg (ISAC-CNR, Italy - j.vonhardenberg@isac.cnr.it)
+Paolo Davini (ISAC-CNR, Italy - p.davini@isac.cnr.it)
 
 References:
 https://github.com/oloapinivad/MiLES
@@ -25,7 +26,7 @@ This namelist is part of the ESMValTool
     <write_netcdf type="boolean">          True         </write_netcdf>
     <force_processing type="boolean">      False        </force_processing>
     <wrk_dir type="path">                  @{WORKPATH}  </wrk_dir>
-    <plot_dir type="path">                 @{PLOTPATH}/ </plot_dir>
+    <plot_dir type="path">                 @{PLOTPATH}  </plot_dir>
     <climo_dir type="path">                @{CLIMOPATH} </climo_dir>
     <regridding_dir type="path">           @{REGRPATH}  </regridding_dir>
     <write_plot_vars type="boolean">       True         </write_plot_vars>
@@ -44,7 +45,7 @@ This namelist is part of the ESMValTool
     <model id="ref"> OBS  ERAINT  day  reanalysis r1i1p1 1979 2014 /work/users/jost/esmtest_data  </model>
 -->
 
-    <model>  OBS    ERA-Interim    reanaly    1    1979 2014   /work/users/jost/esmtest_data </model>
+    <model id="ref">  OBS    ERA-Interim    reanaly    1    1979 2014   /work/users/jost/esmtest_data </model>
 <!--
      <model> CMIP5      ERAINT   day  reanalysis  r1i1p1  1989 2010  /work/users/paolo/DATA/ERAINTERIM/day/Z500/</model> 
 -->

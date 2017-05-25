@@ -1,5 +1,5 @@
 # #############################################################################
-# miles_regimes.R
+# miles_regimes.r
 # Authors:       P. Davini (ISAC-CNR, Italy) (author of MiLES)
 #	         J. von Hardenberg (ISAC-CNR, Italy) (ESMValTool adaptation)
 # #############################################################################

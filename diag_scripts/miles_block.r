@@ -1,5 +1,5 @@
 # #############################################################################
-# miles.R
+# miles_block.r
 # Authors:       P. Davini (ISAC-CNR, Italy) (author of MiLES)
 #	         J. von Hardenberg (ISAC-CNR, Italy) (ESMValTool adaptation)
 # #############################################################################
