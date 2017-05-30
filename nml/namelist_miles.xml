@@ -58,7 +58,7 @@ This namelist is part of the ESMValTool
     <diag>
         <description>         MiLES Blocking Diagnostic  </description>
         <variable_def_dir>    ./variable_defs/     </variable_def_dir>
-        <variable ref_model="ERA-Interim">            z500                </variable>
+        <variable ref_model="ERA-Interim">            zg-500                </variable>
         <field_type>          T2Ds                  </field_type>
         <diag_script_cfg_dir> ./nml/cfg_miles/    </diag_script_cfg_dir>
         <diag_script cfg="miles_block"> miles.py  </diag_script>
@@ -67,7 +67,7 @@ This namelist is part of the ESMValTool
     <diag>
         <description>         MiLES EOF Diagnostic  </description>
         <variable_def_dir>    ./variable_defs/     </variable_def_dir>
-        <variable ref_model="ERA-Interim">            z500                </variable>
+        <variable ref_model="ERA-Interim">            zg-500                </variable>
         <field_type>          T2Ds                  </field_type>
         <diag_script_cfg_dir> ./nml/cfg_miles/    </diag_script_cfg_dir>
         <diag_script cfg="miles_eof"> miles.py  </diag_script>
@@ -76,7 +76,7 @@ This namelist is part of the ESMValTool
     <diag>
         <description>         MiLES Regimes Diagnostic  </description>
         <variable_def_dir>    ./variable_defs/     </variable_def_dir>
-        <variable ref_model="ERA-Interim">            z500                </variable>
+        <variable ref_model="ERA-Interim">            zg-500                </variable>
         <field_type>          T2Ds                  </field_type>
         <diag_script_cfg_dir> ./nml/cfg_miles/    </diag_script_cfg_dir>
         <diag_script cfg="miles_regimes"> miles.py  </diag_script>

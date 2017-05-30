@@ -24,7 +24,7 @@ function calculate(index [1] : integer,
 local tmp, dum, i, verbosity
 begin
     verbosity = stringtointeger(getenv("ESMValTool_verbosity"))
-    info_output("<<<<<<<< Entering z500.ncl", verbosity, 2)
+    info_output("<<<<<<<< Entering zg-500.ncl", verbosity, 2)
     data_new = True
     tmp = read_data(index, "zg", "*3*")
     dum = extract_data(index, tmp, 1, 50000., 50000.)
@@ -34,6 +34,6 @@ begin
     dum@units = variable_info@units
     add_data_var(index, data_new, dum, variable)
 
-    info_output(">>>>>>>> Leaving z500.ncl", verbosity, 2)
+    info_output(">>>>>>>> Leaving zg-500.ncl", verbosity, 2)
     return(data_new)
 end
