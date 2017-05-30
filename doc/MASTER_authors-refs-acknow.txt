@@ -196,4 +196,5 @@ P_dlrveu = DLR project VEU
 P_dlrveu2 = DLR project VEU2
 P_embrace = EU FP7 project EMBRACE
 P_esmval = DLR project ESMVal
-P_c3s34a = C3S 34a Lot 2
+P_primavera = PRIMAVERA
+P_magic = C3S 34a Lot 2 (MAGIC)

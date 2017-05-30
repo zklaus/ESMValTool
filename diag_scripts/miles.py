@@ -36,7 +36,7 @@ def main(project_info):
                              [""],                       # contributors
                              diag_refs,           # diag_references
                              ["E_erainterim"],           # obs_references
-                             ["P_c3s34a"],               # proj_references
+                             ["P_magic","P_primavera"],               # proj_references
                              project_info,
                              verbosity,
                              False)
