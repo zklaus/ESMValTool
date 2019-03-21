@@ -38,6 +38,8 @@ def _get_attr_from_field_coord(ncfield, coord_name, attr):
 
 def concatenate_callback(raw_cube, field, _):
     """Use this callback to fix anything Iris tries to break."""
+    if raw_cube.var_name == 'area':
+        raise iris.exceptions.IgnoreCubeException()
     # Remove attributes that cause issues with merging and concatenation
     for attr in ['creation_date', 'tracking_id', 'history']:
         if attr in raw_cube.attributes:
