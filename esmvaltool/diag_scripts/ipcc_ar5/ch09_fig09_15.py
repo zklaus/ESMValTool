@@ -161,7 +161,8 @@ def plot_antarctic(ax, data, i_plot, **kwargs):
     name = data[0]
     data_dict = data[1]
     bottom_layer = data_dict.get('tob', None)
-    mesh = plot_field(ax, (name, bottom_layer), i_plot, **kwargs)
+    #mesh = plot_field(ax, (name, bottom_layer), i_plot, **kwargs)
+    mesh = plot_field(ax, (name, bottom_layer), **kwargs)
     sic_feb = data_dict.get('sic_feb', None)
     sic_aug = data_dict.get('sic_aug', None)
     if sic_feb is not None:
