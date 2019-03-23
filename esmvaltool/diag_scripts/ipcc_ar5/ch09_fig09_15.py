@@ -111,12 +111,12 @@ def plot_field(ax, data, index=None, show_rms=True, **kwargs):
     mesh = iplt.pcolormesh(field, axes=ax, **kwargs)
     mesh.set_rasterized(True)
     ax.coastlines()
-    # Calculate fontsize. Empirically determined as 1/12 of axes height to
+    # Calculate fontsize. Empirically determined as 1/12 of mesh height to
     # optimally use antarctica space.
     POINTS_PER_INCH = 72.
     scale_transform = ax.figure.dpi_scale_trans.inverted()
-    ax_height = ax.get_window_extent().transformed(scale_transform).height
-    fontsize = int(ax_height/12.*POINTS_PER_INCH)
+    mesh_height = mesh.clipbox.transformed(scale_transform).height
+    fontsize = int(mesh_height/12.*POINTS_PER_INCH)
     ax.text(
         0.54, 0.485,
         model,
