@@ -45,6 +45,24 @@
 #
 
 ---
+documentation:
+
+  description: |
+    Reproducing selected figures from IPCC AR5, chap. 9 (Flato et al., 2013)
+    9.2, 9.4, 9.5, 9.8, 9.42a.
+
+  authors:
+    - zimm_kl
+
+  maintainer:
+    - zimm_kl
+
+  references:
+    - flato13ipcc
+
+  projects:
+    - crescendo
+
 preprocessors:
   prep0:
     regrid:
