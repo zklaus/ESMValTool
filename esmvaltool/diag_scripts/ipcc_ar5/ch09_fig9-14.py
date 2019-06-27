@@ -20,105 +20,201 @@ Project
 CRESCENDO
 """
 
+import logging
 import os
 
 import iris
+from iris.experimental.equalise_cubes import equalise_attributes
+from iris.exceptions import CoordinateNotFoundError
+import iris.plot as iplt
 import matplotlib
+import matplotlib.pyplot as plt
 from matplotlib.ticker import MultipleLocator
+import matplotlib.ticker as mticker
 import numpy as np
 
-# ESMValTool python packages
-from auxiliary import info, warning, error  # noqa: F401
-from smhi import regrid_esmpy
-from smhi.pipeline import (build_var_constraint,
-                           load,
-                           LoadingStep, ProcessingStep)
-from smhi.tools import (
-    calc_error,
-    ensure_dir_exists,
-    get_plot_options,
-    LATITUDE_FORMATTER,
-    LONGITUDE_FORMATTER,
-    multi_model_merge,
-    prepare_project_info,
-    tag_output_file,
-)
-
-matplotlib.use("Agg")
-matplotlib.rcParams.update({'font.size': 18})
-import iris.plot as iplt  # noqa: E402 # has to be done after use('Agg')
-import matplotlib.pyplot as plt  # noqa: E402 # has to be done after use('Agg')
+from esmvaltool.diag_scripts.shared import (
+    ProvenanceLogger, get_diagnostic_filename,
+    get_plot_filename, group_metadata, run_diagnostic)
 
 
-def clim(cube, reference=None, guess_bounds=True):
-    cc = cube.collapsed('time', iris.analysis.MEAN)
-    cc.convert_units('degC')
-    if guess_bounds:
-        for coord_name in ['latitude', 'longitude']:
-            coord = cc.coord(coord_name)
-            if coord.bounds is None:
-                try:
-                    coord.guess_bounds()
-                except:  # noqa: E722
-                    error('Guessing bounds for {} failed.'
-                          ''.format(cc.attributes['model']))
-                    raise
-    if reference is not None:
-        cc = regrid_esmpy(cc, reference)
-    return cc
+matplotlib.rcParams.update({'font.size': 9})
+
+logger = logging.getLogger(os.path.basename(__file__))
 
 
-def zonal_mean(cube, **kwargs):
-    zm = cube.collapsed('longitude', iris.analysis.MEAN)
-    zm.long_name = 'Zonal mean SST'
-    return zm
+def get_provenance_record(ancestor_files):
+    """Create a provenance record describing the diagnostic data and plot."""
+    record = {
+        'caption':
+        ('(a) Zonally averaged sea surface temperature (SST) error in CMIP5 '
+         'models. (b) Equatorial SST error in CMIP5 models. (c) Zonally '
+         'averaged multi-model mean SST error for CMIP5 (red line) together '
+         'with inter-model standard deviation (shading). (d) Equatorial '
+         'multi-model mean SST in CMIP5(red line) together with inter-model '
+         'standard deviation (shading) and observations (black).  Model '
+         'climatologies are derived from the 1979-1999 mean of the historical '
+         'simulations. The Hadley Centre Sea Ice and Sea Surface Temperature '
+         '(HadISST)(Rayner et al., 2003) observational climatology for '
+         '1979-1999 is used as reference for the error calculation (a), (b), '
+         'and (c); and for observations in (d).'),
+        'statistics': ['anomaly', 'mean', 'stddev', 'clim'],
+        'domains': ['eq', 'global'],
+        'plot_types': ['geo', 'sect', 'zonal'],
+        'authors': ['zimm_kl'],
+        'projects': ['crescendo'],
+        'references': ['flato13ipcc', 'hadisst'],
+        'realms': ['ocean'],
+        'themes': ['phys'],
+        'ancestors':
+        ancestor_files,
+    }
+    return record
 
 
-def equatorial(cube, **kwargs):
-    constraint = iris.Constraint(latitude=lambda cell: -5. <= cell.point <= 5.)
-    equ = cube.extract(constraint)
-    equ = equ.collapsed('latitude', iris.analysis.MEAN)
-    equ.long_name = 'Equatorial SST'
+DEGREE_SYMBOL = u'\u00B0'
+
+
+def _fix_lons(lons):
+    """
+    Fix the given longitudes into the range ``[-180, 180]``.
+    """
+    lons = np.array(lons, copy=False, ndmin=1)
+    fixed_lons = ((lons + 180) % 360) - 180
+    # Make the positive 180s positive again.
+    fixed_lons[(fixed_lons == -180) & (lons > 0)] *= -1
+    return fixed_lons
+
+
+def _lon_heimisphere(longitude):
+    """Return the hemisphere (E, W or '' for 0) for the given longitude."""
+    longitude = _fix_lons(longitude)
+    if longitude == 0 or longitude == 180:
+        hemisphere = ''
+    elif longitude > 0:
+        hemisphere = 'E'
+    elif longitude < 0:
+        hemisphere = 'W'
+    else:
+        hemisphere = ''
+    return hemisphere
+
+
+def _lat_heimisphere(latitude):
+    """Return the hemisphere (N, S or '' for 0) for the given latitude."""
+    if latitude > 0:
+        hemisphere = 'N'
+    elif latitude < 0:
+        hemisphere = 'S'
+    else:
+        hemisphere = ''
+    return hemisphere
+
+
+def _east_west_formatted(longitude, num_format='g'):
+    fmt_string = u'{longitude:{num_format}}{degree}{hemisphere}'
+    longitude = _fix_lons(longitude)[0]
+    return fmt_string.format(longitude=abs(longitude), num_format=num_format,
+                             hemisphere=_lon_heimisphere(longitude),
+                             degree=DEGREE_SYMBOL)
+
+
+def _north_south_formatted(latitude, num_format='g'):
+    fmt_string = u'{latitude:{num_format}}{degree}{hemisphere}'
+    return fmt_string.format(latitude=abs(latitude), num_format=num_format,
+                             hemisphere=_lat_heimisphere(latitude),
+                             degree=DEGREE_SYMBOL)
+
+
+#: A formatter which turns longitude values into nice longitudes such as 110W
+LONGITUDE_FORMATTER = mticker.FuncFormatter(lambda v, pos:
+                                            _east_west_formatted(v))
+#: A formatter which turns longitude values into nice longitudes such as 45S
+LATITUDE_FORMATTER = mticker.FuncFormatter(lambda v, pos:
+                                           _north_south_formatted(v))
+
+
+CM_PER_INCH = 2.54
+
+
+def cm_to_inch(cm):
+    return cm/CM_PER_INCH
+
+
+def inch_to_cm(inch):
+    return inch*CM_PER_INCH
+
+
+def calc_error(data, reference=None):
+    if reference is None:
+        return None
+    error = data - reference
+    error.metadata = data.metadata
+    name = data.long_name
+    if name is None:
+        name = data.name()
+    error.long_name = '{} error'.format(name)
+    return error
+
+
+def multi_model_merge(cubes):
+    def promote_model_name(cube):
+        nc = cube.copy()
+        model_name = nc.attributes['model_id']
+        coord = iris.coords.AuxCoord(np.array([model_name]),
+                                     standard_name=None,
+                                     units='no_unit',
+                                     long_name=u'model',
+                                     var_name='model')
+        nc.add_aux_coord(coord)
+        return nc
+    cl = iris.cube.CubeList([promote_model_name(m) for m in cubes])
+    equalise_attributes(cl)
+    for c in cl:
+        c.cell_methods = tuple()
+        for co in ['day_of_month', 'month_number', 'year']:
+            try:
+                c.remove_coord(co)
+            except CoordinateNotFoundError:
+                pass
+    return cl.merge_cube()
+
+
+def load_data(config):
+    for key in config['input_data'].keys():
+        fn = config['input_data'][key]['filename']
+        config['input_data'][key]['cube'] = iris.load_cube(fn)
+
+
+def prepare_reference(group):
+    ref_name = group[0]['reference_dataset']
+    reference_candidates = [ds for ds in group if ds['dataset'] == ref_name]
+    assert len(reference_candidates) == 1
+    reference = reference_candidates[0]
+    group.remove(reference)
+    return reference
+
+
+def mask_equatorial(equ):
     lon = equ.coord('longitude').points
     equ.data.mask[np.logical_and(98. <= lon, lon <= 121.)] = True
     return equ
 
 
-def setup_chains(E):
-    data_dir = os.path.join(E.get_work_dir(), E.get_diag_script_name())
-    ensure_dir_exists(data_dir)
-    loader = LoadingStep(constraint=build_var_constraint('tos'))
-    extractor = ProcessingStep(clim,
-                               data_dir=data_dir,
-                               source=loader)
-    zm = ProcessingStep(zonal_mean,
-                        data_dir=data_dir,
-                        source=extractor)
-    zm_error = ProcessingStep(calc_error,
-                              prefix='zonal-mean-error',
-                              data_dir=data_dir,
-                              source=zm)
-    equ = ProcessingStep(equatorial,
-                         data_dir=data_dir,
-                         source=extractor)
-    equ_error = ProcessingStep(calc_error,
-                               prefix='equatorial-error',
-                               data_dir=data_dir,
-                               source=equ)
-    chains = {
-        'tos': [zm_error, equ, equ_error],
-    }
-    return chains
-
-
-def prepare_data(E, modelconfig):
-    chains = setup_chains(E)
-    models = load(E, chains)
-    return models
+def prepare_data(config):
+    groups = group_metadata(config['input_data'].values(), 'variable_group')
+    zm_g = groups["tos_zm"]
+    zm_ref = prepare_reference(zm_g)['cube']
+    zm_errors = [calc_error(dataset['cube'], zm_ref) for dataset in zm_g]
+    eq_g = groups["tos_eq"]
+    eq_ref = mask_equatorial(prepare_reference(eq_g)['cube'])
+    eqs = [mask_equatorial(ds['cube']) for ds in eq_g]
+    eq_errors = [calc_error(eq, eq_ref) for eq in eqs]
+    return (zm_errors, eqs, eq_ref, eq_errors)
 
 
 def setup_figure():
-    fig = plt.figure(figsize=(18, 15))
+    fig = plt.figure(figsize=(cm_to_inch(18), cm_to_inch(15)))
     ax = np.array(
         [[fig.add_axes([0.10, 0.56, 0.30, 0.35]),
           fig.add_axes([0.50, 0.56, 0.30, 0.35])],
@@ -145,7 +241,7 @@ def plot_zonal_mean_errors_ensemble(ax, zonal_mean_errors, ref_line_style):
     cl = multi_model_merge(zonal_mean_errors)
     for e in zonal_mean_errors:
         ls.append(iplt.plot(e, axes=ax)[0])
-        labels.append(e.attributes['model'])
+        labels.append(e.attributes['model_id'])
     ensemble_mean = cl.collapsed('model', iris.analysis.MEAN)
     m = iplt.plot(ensemble_mean, axes=ax, **ref_line_style)[0]
     ls = [m] + ls
@@ -166,7 +262,7 @@ def plot_equatorial_errors(ax, equatorial_errors, ref_line_style):
     ax.tick_params(which='both', direction='in')
     ax.xaxis.set_label_text(u'Longitude')
     for e in equatorial_errors:
-        iplt.plot(e, label=e.attributes['model'], axes=ax)
+        iplt.plot(e, label=e.attributes['model_id'], axes=ax)
     cl = multi_model_merge(equatorial_errors)
     ensemble_mean = cl.collapsed('model', iris.analysis.MEAN)
     iplt.plot(ensemble_mean, label='CMIP5 mean', axes=ax, **ref_line_style)
@@ -192,7 +288,7 @@ def plot_zonal_mean_errors_comparison(ax, zonal_mean_errors, ref_line_style):
     ax.plot(lat, avg, **ref_line_style)
 
 
-def plot_equatorials(ax, equatorials, ref_line_style):
+def plot_equatorials(ax, reference, equatorials, ref_line_style):
     ax.set_title('(d) Equatorial SST CMIP5')
     ax.yaxis.set_label_text(u'SST (°C)')
     ax.yaxis.set_minor_locator(MultipleLocator(.5))
@@ -204,7 +300,6 @@ def plot_equatorials(ax, equatorials, ref_line_style):
     ax.set_xlim(25., 360.)
     ax.tick_params(which='both', direction='in')
     ax.xaxis.set_label_text(u'Longitude')
-    reference = equatorials[0]
     lon = reference.coord('longitude').points
     data = np.ma.vstack([m.data for m in equatorials[1:]])
     std = data.std(axis=0)
@@ -218,18 +313,16 @@ def plot_equatorials(ax, equatorials, ref_line_style):
 def draw_legend(fig, ls, labels):
     return fig.legend(ls, labels,
                       loc='upper left',
-                      fontsize=16.,
+                      fontsize=7.,
                       bbox_to_anchor=(.81, .92))
 
 
-def produce_plots(E, modelconfig, data):
-    zonal_mean_errors = data['zonal-mean-error_cube'].values[~data['isref']]
-    equatorials = data['equatorial_cube'].values[~data['isref']]
-    equatorial_errors = data['equatorial-error_cube'].values[~data['isref']]
-    cfg, output_path, ref_line_style = get_plot_options(modelconfig, E,
-                                                        'flato13_fig9-14')
-    plot_dir = os.path.dirname(output_path)
-    ensure_dir_exists(plot_dir, 'plot')
+def produce_plots(config, data):
+    (zonal_mean_errors,
+     equatorials,
+     equatorial_ref,
+     equatorial_errors) = data
+    ref_line_style = {'linestyle': '-', 'linewidth': 2.}
     fig, ax = setup_figure()
     ls, labels = plot_zonal_mean_errors_ensemble(ax[0, 0],
                                                  zonal_mean_errors,
@@ -237,36 +330,37 @@ def produce_plots(E, modelconfig, data):
     plot_equatorial_errors(ax[0, 1], equatorial_errors, ref_line_style)
     plot_zonal_mean_errors_comparison(ax[1, 0],
                                       zonal_mean_errors, ref_line_style)
-    ref_ls, ref_labels = plot_equatorials(ax[1, 1],
+    ref_ls, ref_labels = plot_equatorials(ax[1, 1], equatorial_ref,
                                           equatorials, ref_line_style)
     ls = ref_ls + ls
     labels = ref_labels + labels
-    draw_legend(fig, ls, labels)
-    fig.savefig(output_path)
-    tags = [
-        "DM_global", "DM_trop",
-        "PT_zonal", "PT_pro",
-        "ST_diff", "ST_mean", "ST_stddev", "ST_clim",
-    ]
-    tag_output_file(output_path, E, "A_zimm_kl",
-                    "SST error as both zonal and equatorial mean. "
-                    "Similar to Flato et al. 2013, fig. 9.14.",
-                    tags)
+    legend = draw_legend(fig, ls, labels)
+    path = get_plot_filename('ch09_fig09_14', config)
+    fig.savefig(path, additional_artists=[legend], tight_layout=True)
+    return path
 
 
-def main(project_info):
+def main(config):
     """
     Arguments
-        project_info : Dictionary containing project information
+        config: Dictionary containing project information
 
     Description
         This is the main routine of the diagnostic.
     """
+    load_data(config)
+    data = prepare_data(config)
+    if config['write_plots']:
+        plot_path = produce_plots(config, data)
+    ancestor_files = list(config['input_data'].keys())
+    provenance_record = get_provenance_record(ancestor_files)
+    if plot_path is not None:
+        provenance_record['plot_file'] = plot_path
+    netcdf_path = None
+    with ProvenanceLogger(config) as provenance_logger:
+        provenance_logger.log(netcdf_path, provenance_record)
 
-    E, modelconfig = prepare_project_info(project_info,
-                                          authors=["A_zimm_kl"],
-                                          diagnostics=["D_flato13ipcc"],
-                                          projects=["P_crescendo"])
-    data = prepare_data(E, modelconfig)
-    if E.get_write_plots():
-        produce_plots(E, modelconfig, data)
+
+if __name__ == '__main__':
+    with run_diagnostic() as config:
+        main(config)
