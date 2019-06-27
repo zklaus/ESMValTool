@@ -1,41 +1,23 @@
 # -*- coding: utf-8 -*-
 
-"""
-###############################################################################
-ipcc_fig_9_14.py
-Author: Klaus Zimmermann (SMHI, Sweden)
-CRESCENDO project
-###############################################################################
+"""Diagnostic script to plot figure 9.42a of IPCC AR5 chapter 9.
 
 Description
-    Calculate and plot the following quantities with regards to sea surface
-    temperature: zonal mean error, equatorial mean error, equatorial mean.
-    The errors are calculated agains the reference given in the namelist.
-    Equatorial here means between 5 degrees north and 5 degrees south.
-    This has been modelled after IPCC AR5 WG1 Ch. 9, Fig. 9.14.
+-----------
+Calculate and plot the following quantities with regards to sea
+surface temperature: zonal mean error, equatorial mean error,
+equatorial mean.  The errors are calculated agains the reference given
+in the namelist.  Equatorial here means between 5 degrees north and 5
+degrees south.  This has been modelled after IPCC AR5 WG1 Ch. 9,
+Fig. 9.14.
 
-Required diag_script_info attributes (diagnostics specific)
+Author
+------
+Klaus Zimmermann (SMHI, Sweden)
 
-Optional diag_script_info attributes (diagnostic specific)
-    [main_plot]
-        filename : basename of the plot file
-
-    [ref_line_style]
-        linestyle = -
-        linewidth = 4
-
-Required variable_info attributes (variable specific)
-    none
-
-Required variable attributes (defined in namelist)
-    none
-
-Caveats
-
-Modification history
-    20180417-A_zimm_kl: written
-
-###############################################################################
+Project
+-------
+CRESCENDO
 """
 
 import os
