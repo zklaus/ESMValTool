@@ -340,6 +340,13 @@ def produce_plots(config, data):
     return path
 
 
+def write_data(config, data):
+    cubes = iris.cube.CubeList([data[2]]+data[0]+data[1]+data[3])
+    path = get_diagnostic_filename('ch09_fig09_14', config)
+    iris.save(cubes, path)
+    return path
+
+
 def main(config):
     """
     Arguments
@@ -356,7 +363,7 @@ def main(config):
     provenance_record = get_provenance_record(ancestor_files)
     if plot_path is not None:
         provenance_record['plot_file'] = plot_path
-    netcdf_path = None
+    netcdf_path = write_data(config, data)
     with ProvenanceLogger(config) as provenance_logger:
         provenance_logger.log(netcdf_path, provenance_record)
 
