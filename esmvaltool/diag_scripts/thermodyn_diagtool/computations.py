@@ -35,7 +35,7 @@ import numpy as np
 from cdo import Cdo
 from netCDF4 import Dataset
 
-import esmvaltool.diag_scripts.shared as e
+from esmvaltool.diag_scripts.shared import select_metadata
 from esmvaltool.diag_scripts.thermodyn_diagtool import mkthe
 
 L_C = 2501000  # latent heat of condensation
@@ -128,24 +128,24 @@ def budgets(model, wdir, aux_file, input_data):
     - filelist: a list of file names containing the input fields;
     """
     cdo = Cdo()
-    hfls_file = e.select_metadata(input_data, short_name='hfls',
-                                  dataset=model)[0]['filename']
-    hfss_file = e.select_metadata(input_data, short_name='hfss',
-                                  dataset=model)[0]['filename']
-    rlds_file = e.select_metadata(input_data, short_name='rlds',
-                                  dataset=model)[0]['filename']
-    rlus_file = e.select_metadata(input_data, short_name='rlus',
-                                  dataset=model)[0]['filename']
-    rlut_file = e.select_metadata(input_data, short_name='rlut',
-                                  dataset=model)[0]['filename']
-    rsds_file = e.select_metadata(input_data, short_name='rsds',
-                                  dataset=model)[0]['filename']
-    rsus_file = e.select_metadata(input_data, short_name='rsus',
-                                  dataset=model)[0]['filename']
-    rsdt_file = e.select_metadata(input_data, short_name='rsdt',
-                                  dataset=model)[0]['filename']
-    rsut_file = e.select_metadata(input_data, short_name='rsut',
-                                  dataset=model)[0]['filename']
+    hfls_file = select_metadata(input_data, short_name='hfls',
+                                dataset=model)[0]['filename']
+    hfss_file = select_metadata(input_data, short_name='hfss',
+                                dataset=model)[0]['filename']
+    rlds_file = select_metadata(input_data, short_name='rlds',
+                                dataset=model)[0]['filename']
+    rlus_file = select_metadata(input_data, short_name='rlus',
+                                dataset=model)[0]['filename']
+    rlut_file = select_metadata(input_data, short_name='rlut',
+                                dataset=model)[0]['filename']
+    rsds_file = select_metadata(input_data, short_name='rsds',
+                                dataset=model)[0]['filename']
+    rsus_file = select_metadata(input_data, short_name='rsus',
+                                dataset=model)[0]['filename']
+    rsdt_file = select_metadata(input_data, short_name='rsdt',
+                                dataset=model)[0]['filename']
+    rsut_file = select_metadata(input_data, short_name='rsut',
+                                dataset=model)[0]['filename']
     toab_file = wdir + '/{}_toab.nc'.format(model)
     toab_gmean_file = wdir + '/{}_toab_gmean.nc'.format(model)
     surb_file = wdir + '/{}_surb.nc'.format(model)
@@ -220,14 +220,14 @@ def direntr(logger, model, wdir, input_data, aux_file, te_file, lect, flags):
     tcloud_file = aux_files[5]
     tcolumn_file = aux_files[6]
     tlcl_file = aux_files[7]
-    hfls_file = e.select_metadata(input_data, short_name='hfls',
-                                  dataset=model)[0]['filename']
-    hfss_file = e.select_metadata(input_data, short_name='hfss',
-                                  dataset=model)[0]['filename']
-    prsn_file = e.select_metadata(input_data, short_name='prsn',
-                                  dataset=model)[0]['filename']
-    ts_file = e.select_metadata(input_data, short_name='ts',
+    hfls_file = select_metadata(input_data, short_name='hfls',
                                 dataset=model)[0]['filename']
+    hfss_file = select_metadata(input_data, short_name='hfss',
+                                dataset=model)[0]['filename']
+    prsn_file = select_metadata(input_data, short_name='prsn',
+                                dataset=model)[0]['filename']
+    ts_file = select_metadata(input_data, short_name='ts',
+                              dataset=model)[0]['filename']
     logger.info('Computation of the material entropy '
                 'production with the direct method\n')
     logger.info('1. Sensible heat fluxes\n')
@@ -360,16 +360,16 @@ def indentr(model, wdir, infile, input_data, aux_file, toab_gmean):
     - toab_gmean: the climatological annaul mean TOA energy budget;
     """
     cdo = Cdo()
-    rlds_file = e.select_metadata(input_data, short_name='rlds',
-                                  dataset=model)[0]['filename']
-    rlus_file = e.select_metadata(input_data, short_name='rlus',
-                                  dataset=model)[0]['filename']
-    rsds_file = e.select_metadata(input_data, short_name='rsds',
-                                  dataset=model)[0]['filename']
-    rsus_file = e.select_metadata(input_data, short_name='rsus',
-                                  dataset=model)[0]['filename']
-    ts_file = e.select_metadata(input_data, short_name='ts',
+    rlds_file = select_metadata(input_data, short_name='rlds',
                                 dataset=model)[0]['filename']
+    rlus_file = select_metadata(input_data, short_name='rlus',
+                                dataset=model)[0]['filename']
+    rsds_file = select_metadata(input_data, short_name='rsds',
+                                dataset=model)[0]['filename']
+    rsus_file = select_metadata(input_data, short_name='rsus',
+                                dataset=model)[0]['filename']
+    ts_file = select_metadata(input_data, short_name='ts',
+                              dataset=model)[0]['filename']
     horzentropy_file = wdir + '/{}_horizEntropy.nc'.format(model)
     vertenergy_file = wdir + '/{}_verticalEnergy.nc'.format(model)
     vertentropy_file = wdir + '/{}_verticalEntropy.nc'.format(model)
@@ -762,12 +762,12 @@ def wmbudg(model, wdir, aux_file, input_data, auxlist):
     - auxlist: a list of auxiliary files;
     """
     cdo = Cdo()
-    hfls_file = e.select_metadata(input_data, short_name='hfls',
-                                  dataset=model)[0]['filename']
-    pr_file = e.select_metadata(input_data, short_name='pr',
+    hfls_file = select_metadata(input_data, short_name='hfls',
                                 dataset=model)[0]['filename']
-    prsn_file = e.select_metadata(input_data, short_name='prsn',
-                                  dataset=model)[0]['filename']
+    pr_file = select_metadata(input_data, short_name='pr',
+                              dataset=model)[0]['filename']
+    prsn_file = select_metadata(input_data, short_name='prsn',
+                                dataset=model)[0]['filename']
     wmbudg_file = wdir + '/{}_wmb.nc'.format(model)
     wm_gmean_file = wdir + '/{}_wmb_gmean.nc'.format(model)
     latene_file = wdir + '/{}_latent.nc'.format(model)
