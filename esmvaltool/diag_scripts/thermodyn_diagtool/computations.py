@@ -33,10 +33,12 @@ from shutil import move
 
 import numpy as np
 from cdo import Cdo
+import iris
 from netCDF4 import Dataset
 
 from esmvaltool.diag_scripts.shared import select_metadata
 from esmvaltool.diag_scripts.thermodyn_diagtool import mkthe
+
 
 L_C = 2501000  # latent heat of condensation
 LC_SUB = 2835000  # latent heat of sublimation
@@ -109,6 +111,16 @@ def baroceff(model, wdir, aux_file, toab_file, te_file):
     return baroc
 
 
+def get_filename_for_variable(input_data, model, var_name):
+    return select_metadata(input_data, short_name=var_name,
+                           dataset=model)[0]['filename']
+
+
+def load_variable(input_data, model, var_name):
+    filename = get_filename_for_variable(input_data, model, var_name)
+    iris.load_cube(filename)
+
+
 def budgets(model, wdir, aux_file, input_data):
     """Compute radiative budgets from radiative and heat fluxes.
 
@@ -128,31 +140,26 @@ def budgets(model, wdir, aux_file, input_data):
     - filelist: a list of file names containing the input fields;
     """
     cdo = Cdo()
-    hfls_file = select_metadata(input_data, short_name='hfls',
-                                dataset=model)[0]['filename']
-    hfss_file = select_metadata(input_data, short_name='hfss',
-                                dataset=model)[0]['filename']
-    rlds_file = select_metadata(input_data, short_name='rlds',
-                                dataset=model)[0]['filename']
-    rlus_file = select_metadata(input_data, short_name='rlus',
-                                dataset=model)[0]['filename']
-    rlut_file = select_metadata(input_data, short_name='rlut',
-                                dataset=model)[0]['filename']
-    rsds_file = select_metadata(input_data, short_name='rsds',
-                                dataset=model)[0]['filename']
-    rsus_file = select_metadata(input_data, short_name='rsus',
-                                dataset=model)[0]['filename']
-    rsdt_file = select_metadata(input_data, short_name='rsdt',
-                                dataset=model)[0]['filename']
-    rsut_file = select_metadata(input_data, short_name='rsut',
-                                dataset=model)[0]['filename']
+    hfls_file = get_filename_for_variable(input_data, model, 'hfls')
+    hfss_file = get_filename_for_variable(input_data, model, 'hfss')
+    rlds_file = get_filename_for_variable(input_data, model, 'rlds')
+    rlus_file = get_filename_for_variable(input_data, model, 'rlus')
+    rlut_file = get_filename_for_variable(input_data, model, 'rlut')
+    rsds_file = get_filename_for_variable(input_data, model, 'rsds')
+    rsus_file = get_filename_for_variable(input_data, model, 'rsus')
+    rsdt_file = get_filename_for_variable(input_data, model, 'rsdt')
+    rsut_file = get_filename_for_variable(input_data, model, 'rsut')
+
     toab_file = wdir + '/{}_toab.nc'.format(model)
     toab_gmean_file = wdir + '/{}_toab_gmean.nc'.format(model)
+
     surb_file = wdir + '/{}_surb.nc'.format(model)
     aux_surb_file = wdir + '/{}_aux_surb.nc'.format(model)
     surb_gmean_file = wdir + '/{}_surb_gmean.nc'.format(model)
+
     atmb_file = wdir + '/{}_atmb.nc'.format(model)
     atmb_gmean_file = wdir + '/{}_atmb_gmean.nc'.format(model)
+
     removeif(aux_file)
     cdo.sub(input="-sub {} {} {}".format(rsdt_file, rsut_file, rlut_file),
             output=aux_file)
